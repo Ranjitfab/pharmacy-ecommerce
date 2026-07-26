@@ -186,6 +186,10 @@ CREATE TABLE `users` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+---initial admin user
+INSERT INTO users (first_name, last_name, email, password, role)
+VALUES ('Admin', 'User', 'admin@pharmacy.com', '$2b$10$esb8aJ2mLm2hXvmSR3kgROvt3uSeX9XV/LUoHr0t3VOgCaIvQsDom', 'admin');
+-- --------------------------------------------------------
 --
 -- Indexes for dumped tables
 --
