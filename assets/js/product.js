@@ -33,10 +33,17 @@ function editProduct(button) {
     var newName = prompt("Product name:", currentName);
     if (newName === null) return; // cancelled
 
-    var newPrice = prompt("Price:", currentPrice);
+    var newPrice = prompt("Price:", currentPrice.replace('₱', '').trim());
+    if (newPrice === null) return;
+
     var newQuantity = prompt("Quantity:", currentQuantity);
+    if (newQuantity === null) return;
+
     var newReorder = prompt("Reorder level:", currentReorder);
+    if (newReorder === null) return;
+
     var newExpiration = prompt("Expiration date (YYYY-MM-DD):", currentExpiration);
+    if (newExpiration === null) return;
 
     var data = {
         edit_product: 1,
@@ -53,7 +60,7 @@ function editProduct(button) {
             if (response.trim() === "success") {
                 // update the row's text directly instead of reloading the page
                 row.find(".cell-name").text(newName);
-                row.find(".cell-price").text(newPrice);
+                row.find(".cell-price").text("₱" + parseFloat(newPrice).toFixed(2));
                 row.find(".cell-quantity").text(newQuantity);
                 row.find(".cell-reorder").text(newReorder);
                 row.find(".cell-expiration").text(newExpiration);

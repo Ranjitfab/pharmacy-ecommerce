@@ -46,7 +46,7 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
             </div>
             <div class="flex gap-2">
                 <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-                    <a href="../admin/dashboard.php" class="bg-transparent border border-transparent px-4 py-2 rounded-full no-underline text-gray-800 font-medium text-sm transition-colors duration-200 hover:bg-black/5">Admin</a>
+                    <a href="../admin/dashboard.php" class="bg-primary text-white border-none px-5 py-2.5 rounded-full font-semibold cursor-pointer flex items-center gap-2 transition-colors duration-200 no-underline hover:bg-primary-hover">Admin</a>
                 <?php endif; ?>
                 <a href="../auth/logout.php" class="bg-primary text-white border-none px-5 py-2.5 rounded-full font-semibold cursor-pointer flex items-center gap-2 transition-colors duration-200 no-underline hover:bg-primary-hover">Logout</a>
             </div>
