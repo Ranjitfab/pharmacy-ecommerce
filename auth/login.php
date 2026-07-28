@@ -1,10 +1,7 @@
 <?php
 require "../includes/auth.php";
 require "../db/db.php";
-/*
-INSERT INTO users (first_name, last_name, email, password, role)
-VALUES ('Admin', 'User', 'admin@pharmacy.com', '$2b$10$esb8aJ2mLm2hXvmSR3kgROvt3uSeX9XV/LUoHr0t3VOgCaIvQsDom', 'admin');
-*/
+
 $error = "";
 
 if (isset($_POST['login'])) {

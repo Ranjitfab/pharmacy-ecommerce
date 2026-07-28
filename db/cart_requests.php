@@ -6,10 +6,7 @@ requireLogin();
 $myDB = new myDB();
 $userId = $_SESSION['user_id'];
 
-// ------------------------------------------------------------
-// Helper: get the logged-in user's cart_id, creating a cart
-// if they don't have one yet.
-// ------------------------------------------------------------
+// Creates or gets the cart of a user
 function getOrCreateCartId($myDB, $userId)
 {
     $myDB->select('cart', '*', ['user_id' => $userId]);
@@ -21,18 +18,12 @@ function getOrCreateCartId($myDB, $userId)
 
     $myDB->insert('cart', ['user_id' => $userId]);
 
-    // insert() doesn't return the new ID, so fetch it back
     $myDB->select('cart', '*', ['user_id' => $userId]);
     $cart = $myDB->res->fetch_assoc();
     return $cart['cart_id'];
 }
 
-// ------------------------------------------------------------
-// ADD TO CART - AJAX
-// If the product is already in the cart, increase its quantity
-// instead of creating a duplicate row (matches the
-// unique_cart_product constraint in the schema).
-// ------------------------------------------------------------
+// Add to cart AJAX 
 if (isset($_POST['add_to_cart'])) {
     $cartId = getOrCreateCartId($myDB, $userId);
     $productId = $_POST['product_id'];
@@ -40,6 +31,7 @@ if (isset($_POST['add_to_cart'])) {
 
     $myDB->select('cart_items', '*', ['cart_id' => $cartId, 'product_id' => $productId]);
 
+    //If item is already in cart, increase quantity instead of creating another row
     if ($myDB->res->num_rows > 0) {
         $existing = $myDB->res->fetch_assoc();
         $newQty = $existing['quantity'] + $qtyToAdd;
@@ -61,9 +53,7 @@ if (isset($_POST['add_to_cart'])) {
     exit();
 }
 
-// ------------------------------------------------------------
-// UPDATE QUANTITY - AJAX (from the cart page, +/- buttons)
-// ------------------------------------------------------------
+// Update quantity using +/-
 if (isset($_POST['update_quantity'])) {
     $newQty = (int)$_POST['quantity'];
 
@@ -91,6 +81,8 @@ if (isset($_POST['remove_item'])) {
     echo "success";
     exit();
 }
+<<<<<<< HEAD
+=======
 
 // ------------------------------------------------------------
 // FETCH CART - AJAX (returns JSON for slide-out drawer)
@@ -138,3 +130,4 @@ if (isset($_POST['fetch_cart'])) {
     ]);
     exit();
 }
+>>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750

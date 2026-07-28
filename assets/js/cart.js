@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+// Add to cart from shop.php
+=======
 // ------------------------------------------------------------
 // DRAWER TOGGLE LOGIC
 // ------------------------------------------------------------
@@ -55,6 +58,7 @@ function showToast(message) {
 // ------------------------------------------------------------
 // ADD TO CART - called from shop.php's product cards
 // ------------------------------------------------------------
+>>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
 function addToCart(productId) {
     $.post("../db/cart_requests.php", { add_to_cart: 1, product_id: productId, quantity: 1 })
         .done(function(response) {
@@ -74,9 +78,13 @@ function addToCart(productId) {
         });
 }
 
+<<<<<<< HEAD
+// Change quantity using +/- by reading the quantity row
+=======
 // ------------------------------------------------------------
 // CHANGE QUANTITY (+/- buttons)
 // ------------------------------------------------------------
+>>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
 function changeQuantity(button, delta) {
     // Check if we are inside the drawer or the standalone cart table
     var isDrawer = $(button).closest(".drawer-item").length > 0;
@@ -118,9 +126,8 @@ function changeQuantity(button, delta) {
         });
 }
 
-// ------------------------------------------------------------
-// REMOVE ITEM (Remove button on cart.php)
-// ------------------------------------------------------------
+
+// Remove item button on cart.php)
 function removeItem(button) {
     if (!confirm("Remove this item from your cart?")) return;
 
@@ -161,6 +168,10 @@ function recalculateTotal() {
         totalEl.text(total.toFixed(2));
     }
 
+<<<<<<< HEAD
+    // If the cart is now empty, the page will reload
+=======
+>>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
     if (subtotalCells.length === 0) {
         location.reload();
     }

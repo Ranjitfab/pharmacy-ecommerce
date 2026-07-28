@@ -9,11 +9,18 @@ $products = $myDB->res;
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Manage Products</title>
     <link rel="stylesheet" href="../assets/css/tailwind.css">
 </head>
+<<<<<<< HEAD
+
+<body>
+    <h1>Manage Products</h1>
+    <p>Logged in as <?= htmlspecialchars($_SESSION['full_name']) ?> | <a href="../auth/logout.php">Logout</a></p>
+=======
 <body class="font-sans bg-[#f4f7f6] m-0 text-[#333]">
     <div class="flex">
         <!-- Sidebar -->
@@ -29,6 +36,7 @@ $products = $myDB->res;
                 <a href="../auth/logout.php" class="text-red-500 font-medium no-underline flex items-center gap-2 px-4 py-2 hover:bg-red-50 rounded-lg transition-colors">Logout</a>
             </div>
         </aside>
+>>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
 
         <!-- Main Content -->
         <main class="flex-1 p-8 overflow-y-auto h-screen">
@@ -39,6 +47,41 @@ $products = $myDB->res;
                 </div>
             </header>
 
+<<<<<<< HEAD
+    <!-- PRODUCT TABLE - edit/delete use AJAX in product.js -->
+    <h2>Current Products</h2>
+    <table id="product-table" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Reorder Level</th>
+                <th>Expiration</th>
+                <th>Rx Required</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($row = $products->fetch_assoc()): ?>
+                <tr data-id="<?= $row['product_id'] ?>">
+                    <td><?= $row['product_id'] ?></td>
+                    <td class="cell-name"><?= htmlspecialchars($row['product_name']) ?></td>
+                    <td class="cell-price"><?= $row['price'] ?></td>
+                    <td class="cell-quantity"><?= $row['quantity'] ?></td>
+                    <td class="cell-reorder"><?= $row['reorder_level'] ?></td>
+                    <td class="cell-expiration"><?= $row['expiration_date'] ?></td>
+                    <td class="cell-rx"><?= $row['requires_prescription'] ? 'Yes' : 'No' ?></td>
+                    <td>
+                        <button onclick="editProduct(this)">Edit</button>
+                        <button onclick="deleteProduct(this)">Delete</button>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        </tbody>
+    </table>
+=======
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
                 <h3 class="font-bold text-lg m-0 mb-4">Add New Product</h3>
                 <form method="POST" action="../db/product_requests.php" class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -64,6 +107,7 @@ $products = $myDB->res;
                     </div>
                 </form>
             </div>
+>>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
 
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="font-bold text-lg m-0 mb-4">Current Products</h3>
@@ -115,4 +159,5 @@ $products = $myDB->res;
     <script src="../assets/js/jquery.min.js"></script>
     <script src="../assets/js/product.js"></script>
 </body>
+
 </html>

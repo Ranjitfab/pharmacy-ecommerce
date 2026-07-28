@@ -17,8 +17,6 @@ if ($cart) {
     $cartItems = $myDB->res->fetch_all(MYSQLI_ASSOC);
 
     // Fetch each item's product details individually - the select()
-    // helper doesn't support JOINs, so this is a simple N+1 lookup.
-    // Fine at this project's scale (a handful of cart items).
     foreach ($cartItems as $item) {
         $productDB = new myDB();
         $productDB->select('products', '*', ['product_id' => $item['product_id']]);

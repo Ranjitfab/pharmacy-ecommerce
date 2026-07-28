@@ -21,6 +21,7 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,6 +30,65 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/tailwind.css">
     <style>
+<<<<<<< HEAD
+        #product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .badge {
+            background: #eee;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Shop</h1>
+    <p>
+        Welcome, <?= htmlspecialchars($_SESSION['full_name']) ?> |
+        <a href="cart.php">View Cart</a> |
+        <a href="../auth/logout.php">Logout</a>
+    </p>
+
+    <label for="category-filter">Filter by category:</label>
+    <select id="category-filter" onchange="filterProducts()">
+        <option value="all">All Categories</option>
+        <?php while ($cat = $categories->fetch_assoc()): ?>
+            <option value="<?= $cat['category_id'] ?>"><?= htmlspecialchars($cat['category_name']) ?></option>
+        <?php endwhile; ?>
+    </select>
+
+    <div id="product-grid">
+        <?php while ($row = $products->fetch_assoc()): ?>
+            <div class="card" data-category="<?= $row['category_id'] ?>">
+                <h3><?= htmlspecialchars($row['product_name']) ?></h3>
+                <?php if ($row['requires_prescription']): ?>
+                    <span class="badge">Prescription required</span>
+                <?php endif; ?>
+                <p>₱<?= number_format($row['price'], 2) ?></p>
+                <p>
+                    <?php if ($row['quantity'] > 0): ?>
+                        In stock: <?= $row['quantity'] ?>
+                    <?php else: ?>
+                        <strong>Out of stock</strong>
+                    <?php endif; ?>
+                </p>
+                <button
+                    onclick="addToCart(<?= $row['product_id'] ?>)"
+                    <?= $row['quantity'] <= 0 ? 'disabled' : '' ?>>
+                    Add to Cart
+                </button>
+=======
         .cat-btn.active { background-color: var(--color-primary); color: white; border-color: var(--color-primary); }
         .cat-btn:hover:not(.active) { border-color: #cbd5e1; color: #1f2937; }
         .drawer-overlay.open { opacity: 1; visibility: visible; }
@@ -43,6 +103,7 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
         <div class="flex items-center gap-6">
             <div class="text-xl font-bold text-gray-800 flex items-center gap-2">
                 <i class="fa-solid fa-pills bg-primary text-white p-1.5 rounded-md text-sm"></i> RxStock
+>>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
             </div>
             <div class="flex gap-2">
                 <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
@@ -123,6 +184,17 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
         </div>
     </div>
 
+<<<<<<< HEAD
+    <script>
+        //Filter products by category
+        function filterProducts() {
+            var selected = document.getElementById("category-filter").value;
+            var cards = document.querySelectorAll("#product-grid .card");
+
+            cards.forEach(function(card) {
+                if (selected === "all" || card.dataset.category === selected) {
+                    card.style.display = "block";
+=======
     <!-- CART DRAWER -->
     <div class="drawer-overlay fixed top-0 left-0 w-screen h-screen bg-black/20 opacity-0 invisible transition-all duration-300 z-[99] backdrop-blur-[2px]" id="drawer-overlay" onclick="closeCartDrawer()"></div>
     <div class="cart-drawer fixed top-0 -right-[420px] w-[400px] max-w-[100vw] h-screen bg-white z-[100] shadow-[-4px_0_24px_rgba(0,0,0,0.1)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col" id="cart-drawer">
@@ -155,6 +227,7 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
             $('.card').each(function() {
                 if (categoryId === 'all' || $(this).data('category') == categoryId) {
                     $(this).show();
+>>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
                 } else {
                     $(this).hide();
                 }
@@ -168,4 +241,5 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
     </script>
     <script src="../assets/js/cart.js"></script>
 </body>
+
 </html>
