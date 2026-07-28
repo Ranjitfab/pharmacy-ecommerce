@@ -65,8 +65,6 @@ $totalCustomers = $myDB3->res->num_rows;
                 </div>
             </div>
 
-<<<<<<< HEAD
-=======
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="font-bold text-lg m-0 mb-4">Quick Links</h3>
                 <div class="flex gap-4">
@@ -76,7 +74,6 @@ $totalCustomers = $myDB3->res->num_rows;
             </div>
         </main>
     </div>
->>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
 </body>
 
 </html>

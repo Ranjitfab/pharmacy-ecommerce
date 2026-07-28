@@ -81,8 +81,6 @@ if (isset($_POST['remove_item'])) {
     echo "success";
     exit();
 }
-<<<<<<< HEAD
-=======
 
 // ------------------------------------------------------------
 // FETCH CART - AJAX (returns JSON for slide-out drawer)
@@ -130,4 +128,3 @@ if (isset($_POST['fetch_cart'])) {
     ]);
     exit();
 }
->>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
