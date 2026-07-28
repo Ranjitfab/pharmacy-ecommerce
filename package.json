@@ -1,0 +1,24 @@
+{
+  "name": "pharmacy-ecommerce",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/input.css -o ./assets/css/tailwind.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ranjitfab/pharmacy-ecommerce.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ranjitfab/pharmacy-ecommerce/issues"
+  },
+  "homepage": "https://github.com/Ranjitfab/pharmacy-ecommerce#readme",
+  "description": "",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

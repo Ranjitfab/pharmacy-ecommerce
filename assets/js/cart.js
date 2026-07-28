@@ -1,60 +1,129 @@
+<<<<<<< HEAD
 // Add to cart from shop.php
-function addToCart(productId) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "../db/cart_requests.php", true);
-    xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+=======
+// ------------------------------------------------------------
+// DRAWER TOGGLE LOGIC
+// ------------------------------------------------------------
+function openCartDrawer() {
+    $("#drawer-overlay").addClass("open");
+    $("#cart-drawer").addClass("open");
+    refreshCartDrawer();
+}
 
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            if (this.responseText.trim() === "success") {
-                alert("Added to cart!");
+function closeCartDrawer() {
+    $("#drawer-overlay").removeClass("open");
+    $("#cart-drawer").removeClass("open");
+}
+
+function refreshCartDrawer() {
+    if ($("#drawer-body").length === 0) return; // Not on a page with a drawer
+
+    $.post("../db/cart_requests.php", { fetch_cart: 1 })
+        .done(function(response) {
+            try {
+                var data = JSON.parse(response);
+                $("#drawer-body").html(data.html);
+                $("#drawer-subtotal").text(data.total);
+                $("#cart-badge").text(data.count);
+            } catch (e) {
+                console.error("Error parsing cart data", e);
+            }
+        });
+}
+
+// ------------------------------------------------------------
+// TOAST NOTIFICATION LOGIC
+// ------------------------------------------------------------
+function showToast(message) {
+    if ($("#toast-container").length === 0) return;
+    
+    var toastId = "toast-" + Date.now();
+    var toastHtml = '<div class="toast" id="' + toastId + '"><i class="fa-solid fa-circle-check"></i> ' + message + '</div>';
+    
+    $("#toast-container").append(toastHtml);
+    
+    var toastEl = $("#" + toastId);
+    setTimeout(function() {
+        toastEl.addClass("show");
+    }, 10);
+    
+    setTimeout(function() {
+        toastEl.removeClass("show");
+        setTimeout(function() {
+            toastEl.remove();
+        }, 300);
+    }, 3000);
+}
+
+// ------------------------------------------------------------
+// ADD TO CART - called from shop.php's product cards
+// ------------------------------------------------------------
+>>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
+function addToCart(productId) {
+    $.post("../db/cart_requests.php", { add_to_cart: 1, product_id: productId, quantity: 1 })
+        .done(function(response) {
+            if (response.trim() === "success") {
+                if ($("#cart-drawer").length > 0) {
+                    refreshCartDrawer(); // Refresh in background
+                    showToast("Item added to cart!");
+                } else {
+                    alert("Added to cart!");
+                }
             } else {
                 alert("Error adding to cart.");
             }
-        }
-    };
-
-    xhttp.send("add_to_cart=1&product_id=" + encodeURIComponent(productId) + "&quantity=1");
+        })
+        .fail(function() {
+            alert("Error adding to cart.");
+        });
 }
 
+<<<<<<< HEAD
 // Change quantity using +/- by reading the quantity row
+=======
+// ------------------------------------------------------------
+// CHANGE QUANTITY (+/- buttons)
+// ------------------------------------------------------------
+>>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
 function changeQuantity(button, delta) {
-    var row = button.closest("tr");
-    var cartItemId = row.dataset.cartItemId;
-    var quantitySpan = row.querySelector(".cell-quantity");
-    var currentQty = parseInt(quantitySpan.textContent);
+    // Check if we are inside the drawer or the standalone cart table
+    var isDrawer = $(button).closest(".drawer-item").length > 0;
+    var row = $(button).closest("tr, .drawer-item");
+    var cartItemId = row.data("cart-item-id");
+    
+    var quantitySpan = isDrawer ? row.find("span").first() : row.find(".cell-quantity");
+    var currentQty = parseInt(quantitySpan.text());
     var newQty = currentQty + delta;
 
     if (newQty <= 0 && !confirm("Remove this item from your cart?")) {
         return;
     }
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "../db/cart_requests.php", true);
-    xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            var result = this.responseText.trim();
-
-            if (result === "removed") {
-                row.remove();
-                recalculateTotal();
-            } else if (result === "success") {
-                quantitySpan.textContent = newQty;
-
-                var price = parsePrice(row.querySelector(".cell-price").textContent);
-                var newSubtotal = price * newQty;
-                row.querySelector(".cell-subtotal").textContent = "₱" + newSubtotal.toFixed(2);
-
-                recalculateTotal();
+    $.post("../db/cart_requests.php", { update_quantity: 1, cart_item_id: cartItemId, quantity: newQty })
+        .done(function(response) {
+            var result = response.trim();
+            if (result === "removed" || result === "success") {
+                if (isDrawer) {
+                    refreshCartDrawer();
+                } else {
+                    // Update legacy cart.php table
+                    if (result === "removed") {
+                        row.remove();
+                    } else {
+                        quantitySpan.text(newQty);
+                        var price = parsePrice(row.find(".cell-price").text());
+                        var newSubtotal = price * newQty;
+                        row.find(".cell-subtotal").text("₱" + newSubtotal.toFixed(2));
+                    }
+                    recalculateTotal();
+                }
             } else {
                 alert("Error updating quantity.");
             }
-        }
-    };
-
-    xhttp.send("update_quantity=1&cart_item_id=" + encodeURIComponent(cartItemId) + "&quantity=" + newQty);
+        })
+        .fail(function() {
+            alert("Error updating quantity.");
+        });
 }
 
 
@@ -62,49 +131,47 @@ function changeQuantity(button, delta) {
 function removeItem(button) {
     if (!confirm("Remove this item from your cart?")) return;
 
-    var row = button.closest("tr");
-    var cartItemId = row.dataset.cartItemId;
+    var row = $(button).closest("tr");
+    var cartItemId = row.data("cart-item-id");
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "../db/cart_requests.php", true);
-    xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            if (this.responseText.trim() === "success") {
+    $.post("../db/cart_requests.php", { remove_item: 1, cart_item_id: cartItemId })
+        .done(function(response) {
+            if (response.trim() === "success") {
                 row.remove();
                 recalculateTotal();
             } else {
                 alert("Error removing item.");
             }
-        }
-    };
-
-    xhttp.send("remove_item=1&cart_item_id=" + encodeURIComponent(cartItemId));
+        })
+        .fail(function() {
+            alert("Error removing item.");
+        });
 }
 
 // ------------------------------------------------------------
-// Helpers
+// Helpers for legacy cart.php
 // ------------------------------------------------------------
 function parsePrice(text) {
-    // Strips the ₱ symbol and any thousands-separator commas
     return parseFloat(text.replace("₱", "").replace(/,/g, ""));
 }
 
 function recalculateTotal() {
-    var subtotalCells = document.querySelectorAll("#cart-table .cell-subtotal");
+    var subtotalCells = $("#cart-table .cell-subtotal");
     var total = 0;
 
-    subtotalCells.forEach(function (cell) {
-        total += parsePrice(cell.textContent);
+    subtotalCells.each(function () {
+        total += parsePrice($(this).text());
     });
 
-    var totalEl = document.getElementById("cart-total");
-    if (totalEl) {
-        totalEl.textContent = total.toFixed(2);
+    var totalEl = $("#cart-total");
+    if (totalEl.length) {
+        totalEl.text(total.toFixed(2));
     }
 
+<<<<<<< HEAD
     // If the cart is now empty, the page will reload
+=======
+>>>>>>> 270316e99ab4e14fb3342b04cec5a6abd8dbf750
     if (subtotalCells.length === 0) {
         location.reload();
     }
