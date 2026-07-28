@@ -1,40 +1,38 @@
 function placeOrder() {
-    var button = document.getElementById("place-order-btn");
-    var messageBox = document.getElementById("checkout-message");
+    var button = $("#place-order-btn");
+    var messageBox = $("#checkout-message");
 
-    button.disabled = true; // prevent double-clicks from creating duplicate orders
-    button.textContent = "Placing order...";
+    button.prop("disabled", true);
+    button.text("Placing order...");
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "../db/order_requests.php", true);
-    xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            var result = this.responseText.trim();
+    $.post("../db/order_requests.php", { checkout: 1 })
+        .done(function(response) {
+            var result = response.trim();
 
             if (result.startsWith("success")) {
                 var orderId = result.split(":")[1];
-                messageBox.innerHTML = "<p style='color:green;'>Order #" + orderId + " placed successfully!</p>";
+                messageBox.html("<p style='color:green;'>Order #" + orderId + " placed successfully!</p>");
                 setTimeout(function () {
                     location.href = "shop.php";
                 }, 2000);
             } else if (result === "empty_cart") {
-                messageBox.innerHTML = "<p style='color:red;'>Your cart is empty.</p>";
-                button.disabled = false;
-                button.textContent = "Place Order";
+                messageBox.html("<p style='color:red;'>Your cart is empty.</p>");
+                button.prop("disabled", false);
+                button.text("Place Order");
             } else if (result.startsWith("insufficient_stock")) {
                 var productName = result.split(":")[1];
-                messageBox.innerHTML = "<p style='color:red;'>Not enough stock for: " + productName + "</p>";
-                button.disabled = false;
-                button.textContent = "Place Order";
+                messageBox.html("<p style='color:red;'>Not enough stock for: " + productName + "</p>");
+                button.prop("disabled", false);
+                button.text("Place Order");
             } else {
-                messageBox.innerHTML = "<p style='color:red;'>Something went wrong. Please try again.</p>";
-                button.disabled = false;
-                button.textContent = "Place Order";
+                messageBox.html("<p style='color:red;'>Something went wrong. Please try again.</p>");
+                button.prop("disabled", false);
+                button.text("Place Order");
             }
-        }
-    };
-
-    xhttp.send("checkout=1");
+        })
+        .fail(function() {
+            messageBox.html("<p style='color:red;'>Something went wrong. Please try again.</p>");
+            button.prop("disabled", false);
+            button.text("Place Order");
+        });
 }

@@ -36,23 +36,27 @@ if (isset($_POST['login'])) {
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="../assets/css/tailwind.css">
 </head>
 
-<body>
-    <h1>Login</h1>
+<body class="font-sans bg-[#f4f7f6] flex justify-center items-center min-h-screen m-0 p-5">
+    <div class="bg-white p-10 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] w-full max-w-[450px]">
+        <h1 class="mt-0 text-2xl text-[#333] text-center mb-6 font-bold">Login</h1>
 
-    <?php if ($error): ?>
-        <p style="color:red;"><?= $error ?></p>
-    <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="bg-red-100 text-red-600 p-2.5 rounded-lg text-sm text-center mb-4 border border-red-200"><?= $error ?></div>
+        <?php endif; ?>
 
-    <form method="POST" action="login.php">
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit" name="login">Login</button>
-    </form>
+        <form method="POST" action="login.php" class="flex flex-col gap-4">
+            <input type="email" name="email" placeholder="Email" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
+            <input type="password" name="password" placeholder="Password" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
+            <button type="submit" name="login" class="bg-primary text-white border-none p-3 rounded-lg text-base font-medium cursor-pointer transition-colors duration-200 mt-2 hover:bg-primary-hover">Login</button>
+        </form>
 
-    <p>No account yet? <a href="register.php">Register here</a></p>
+        <p class="text-center text-sm text-[#666] mt-5 mb-0">No account yet? <a href="register.php" class="text-primary no-underline hover:underline">Register here</a></p>
+    </div>
 </body>
 
 </html>
