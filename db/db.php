@@ -34,7 +34,7 @@ class myDB
                 $types .= substr(gettype($value), 0, 1);
             }
 
-            $prep = substr($prep, 0, -1);
+            $prep = substr($prep, 0, -1); //trims trailing ","
             $stmt = $this->conn->prepare("INSERT INTO $table($table_columns) VALUES ($prep)");
             $stmt->bind_param($types, ...array_values($data));
             $stmt->execute();
@@ -56,7 +56,7 @@ class myDB
                     $types .= substr(gettype($value), 0, 1);
                 }
 
-                $cond = substr($cond, 0, -4); // trim trailing " AND "
+                $cond = substr($cond, 0, -4); // trims trailing " AND "
                 $stmt = $this->conn->prepare("SELECT $row FROM $table WHERE $cond");
                 $stmt->bind_param($types, ...array_values($where));
             } else {

@@ -9,10 +9,12 @@ $products = $myDB->res;
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Manage Products</title>
 </head>
+
 <body>
     <h1>Manage Products</h1>
     <p>Logged in as <?= htmlspecialchars($_SESSION['full_name']) ?> | <a href="../auth/logout.php">Logout</a></p>
@@ -32,7 +34,7 @@ $products = $myDB->res;
         <button type="submit" name="add_product">Add Product</button>
     </form>
 
-    <!-- PRODUCT TABLE - edit/delete use AJAX (see product.js) -->
+    <!-- PRODUCT TABLE - edit/delete use AJAX in product.js -->
     <h2>Current Products</h2>
     <table id="product-table" border="1">
         <thead>
@@ -68,4 +70,5 @@ $products = $myDB->res;
 
     <script src="../assets/js/product.js"></script>
 </body>
+
 </html>

@@ -5,11 +5,7 @@ requireAdmin();
 
 $myDB = new myDB();
 
-// ------------------------------------------------------------
-// ADD PRODUCT - traditional form POST, page reload (matches the
-// professor's original pattern). Triggered by admin/products.php's
-// "Add Product" form.
-// ------------------------------------------------------------
+// Add Prodcut AJAX
 if (isset($_POST['add_product'])) {
     $myDB->insert('products', [
         'category_id'            => $_POST['category_id'],
@@ -27,10 +23,7 @@ if (isset($_POST['add_product'])) {
     exit();
 }
 
-// ------------------------------------------------------------
-// EDIT PRODUCT - AJAX. Expects POST data + product_id, returns
-// a plain "success" or "error" string for product.js to check.
-// ------------------------------------------------------------
+// Edit Product AJAX. Expects POST data + product_id, returns "success" or "error"
 if (isset($_POST['edit_product'])) {
     $myDB->update(
         'products',
@@ -49,9 +42,7 @@ if (isset($_POST['edit_product'])) {
     exit();
 }
 
-// ------------------------------------------------------------
-// DELETE PRODUCT - AJAX. Expects product_id, returns "success".
-// ------------------------------------------------------------
+// Delete product AJAX. Expects product_id, returns "success".
 if (isset($_POST['delete_product'])) {
     $myDB->delete('products', ['product_id' => $_POST['product_id']]);
     echo "success";

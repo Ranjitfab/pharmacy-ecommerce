@@ -40,7 +40,6 @@ $totalCustomers = $myDB3->res->num_rows;
         <li>Total Customers: <?= $totalCustomers ?></li>
     </ul>
 
-    <!-- Low stock / expiration notifications will be added here later -->
 </body>
 
 </html>

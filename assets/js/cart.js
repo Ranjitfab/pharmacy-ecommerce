@@ -1,6 +1,4 @@
-// ------------------------------------------------------------
-// ADD TO CART - called from shop.php's product cards
-// ------------------------------------------------------------
+// Add to cart from shop.php
 function addToCart(productId) {
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", "../db/cart_requests.php", true);
@@ -19,12 +17,7 @@ function addToCart(productId) {
     xhttp.send("add_to_cart=1&product_id=" + encodeURIComponent(productId) + "&quantity=1");
 }
 
-// ------------------------------------------------------------
-// CHANGE QUANTITY (+/- buttons on cart.php)
-// Reads the current quantity from the row, adjusts it by
-// `delta`, sends the new value, and updates subtotal + total
-// on success.
-// ------------------------------------------------------------
+// Change quantity using +/- by reading the quantity row
 function changeQuantity(button, delta) {
     var row = button.closest("tr");
     var cartItemId = row.dataset.cartItemId;
@@ -64,9 +57,8 @@ function changeQuantity(button, delta) {
     xhttp.send("update_quantity=1&cart_item_id=" + encodeURIComponent(cartItemId) + "&quantity=" + newQty);
 }
 
-// ------------------------------------------------------------
-// REMOVE ITEM (Remove button on cart.php)
-// ------------------------------------------------------------
+
+// Remove item button on cart.php)
 function removeItem(button) {
     if (!confirm("Remove this item from your cart?")) return;
 
@@ -112,8 +104,7 @@ function recalculateTotal() {
         totalEl.textContent = total.toFixed(2);
     }
 
-    // If the cart is now empty, a full reload is simplest to show
-    // the "Your cart is empty" message correctly.
+    // If the cart is now empty, the page will reload
     if (subtotalCells.length === 0) {
         location.reload();
     }

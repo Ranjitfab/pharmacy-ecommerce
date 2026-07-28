@@ -14,15 +14,32 @@ $categories = $myDB2->res;
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Shop</title>
     <style>
-        #product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
-        .card { border: 1px solid #ccc; border-radius: 8px; padding: 12px; }
-        .badge { background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; }
+        #product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .badge {
+            background: #eee;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
     </style>
 </head>
+
 <body>
     <h1>Shop</h1>
     <p>
@@ -64,13 +81,12 @@ $categories = $myDB2->res;
     </div>
 
     <script>
-        // Client-side filter - no need for an extra AJAX round trip
-        // since all products are already rendered on the page.
+        //Filter products by category
         function filterProducts() {
             var selected = document.getElementById("category-filter").value;
             var cards = document.querySelectorAll("#product-grid .card");
 
-            cards.forEach(function (card) {
+            cards.forEach(function(card) {
                 if (selected === "all" || card.dataset.category === selected) {
                     card.style.display = "block";
                 } else {
@@ -81,4 +97,5 @@ $categories = $myDB2->res;
     </script>
     <script src="../assets/js/cart.js"></script>
 </body>
+
 </html>
