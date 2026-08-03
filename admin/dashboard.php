@@ -16,6 +16,39 @@ $totalOrders = $myDB2->res->num_rows;
 $myDB3 = new myDB();
 $myDB3->select('users', '*', ['role' => 'customer']);
 $totalCustomers = $myDB3->res->num_rows;
+
+$today = new DateTimeImmutable('today');
+$adminAlerts = [];
+
+$myDB4 = new myDB();
+$myDB4->select('products', '*');
+$products = $myDB4->res->fetch_all(MYSQLI_ASSOC);
+
+foreach ($products as $product) {
+    $quantity = (int) $product['quantity'];
+    $reorderLevel = (int) $product['reorder_level'];
+    $expirationDate = $product['expiration_date'] ? new DateTimeImmutable($product['expiration_date']) : null;
+
+    if ($quantity <= $reorderLevel) {
+        $adminAlerts[] = [
+            'type' => 'low_stock',
+            'title' => 'Low Stock',
+            'message' => htmlspecialchars($product['product_name']) . ' is low in stock (' . $quantity . ' left).',
+        ];
+    }
+
+    if ($expirationDate) {
+        $daysLeft = (int) $today->diff($expirationDate)->format('%r%a');
+
+        if ($daysLeft <= 30) {
+            $adminAlerts[] = [
+                'type' => 'expiring_soon',
+                'title' => 'Expiring Soon',
+                'message' => htmlspecialchars($product['product_name']) . ' expires in ' . $daysLeft . ' day(s).',
+            ];
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,6 +98,20 @@ $totalCustomers = $myDB3->res->num_rows;
                 </div>
             </div>
 
+            <?php if (!empty($adminAlerts)): ?>
+                <div id="admin-notification-list" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
+                    <h3 class="font-bold text-lg m-0 mb-4">Admin Alerts</h3>
+                    <ul class="m-0 p-0 list-none flex flex-col gap-3">
+                        <?php foreach ($adminAlerts as $alert): ?>
+                            <li class="border-l-4 border-red-500 bg-red-50 p-3 rounded-lg text-sm text-gray-700">
+                                <strong><?= htmlspecialchars($alert['title']) ?>:</strong>
+                                <?= $alert['message'] ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="font-bold text-lg m-0 mb-4">Quick Links</h3>
                 <div class="flex gap-4">
@@ -74,6 +121,7 @@ $totalCustomers = $myDB3->res->num_rows;
             </div>
         </main>
     </div>
+    <script src="../assets/js/notifications.js"></script>
 </body>
 
 </html>
