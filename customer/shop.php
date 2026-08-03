@@ -30,15 +30,35 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/tailwind.css">
     <style>
-        .cat-btn.active { background-color: var(--color-primary); color: white; border-color: var(--color-primary); }
-        .cat-btn:hover:not(.active) { border-color: #cbd5e1; color: #1f2937; }
-        .drawer-overlay.open { opacity: 1; visibility: visible; }
-        .cart-drawer.open { right: 0; }
-        .toast.show { opacity: 1; transform: translateY(0); }
+        .cat-btn.active {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .cat-btn:hover:not(.active) {
+            border-color: #cbd5e1;
+            color: #1f2937;
+        }
+
+        .drawer-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cart-drawer.open {
+            right: 0;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
+
 <body class="font-sans bg-[#f8fafc] m-0 text-gray-800">
-    
+
     <!-- HEADER -->
     <header class="flex justify-between items-center p-4 md:px-8 border-b border-black/5 bg-[#f8fafc]">
         <div class="flex items-center gap-6">
@@ -46,7 +66,7 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
                 <i class="fa-solid fa-pills bg-primary text-white p-1.5 rounded-md text-sm"></i> RxStock
             </div>
             <div class="flex gap-2">
-                <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                     <a href="../admin/dashboard.php" class="bg-primary text-white border-none px-5 py-2.5 rounded-full font-semibold cursor-pointer flex items-center gap-2 transition-colors duration-200 no-underline hover:bg-primary-hover">Admin</a>
                 <?php endif; ?>
                 <a href="../auth/logout.php" class="bg-primary text-white border-none px-5 py-2.5 rounded-full font-semibold cursor-pointer flex items-center gap-2 transition-colors duration-200 no-underline hover:bg-primary-hover">Logout</a>
@@ -86,25 +106,25 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
                             <i class="fa-solid fa-file-prescription"></i>
                         </div>
                         <?php
-                            $catName = isset($categories_lookup[$row['category_id']]) ? $categories_lookup[$row['category_id']] : 'General';
+                        $catName = isset($categories_lookup[$row['category_id']]) ? $categories_lookup[$row['category_id']] : 'General';
                         ?>
                         <span class="bg-primary text-white px-2.5 py-1 rounded-full text-xs font-semibold"><?= htmlspecialchars($catName) ?></span>
                     </div>
-                    
+
                     <h3 class="m-0 mb-1 text-lg text-gray-800 font-bold"><?= htmlspecialchars($row['product_name']) ?></h3>
                     <p class="text-[13px] text-gray-500 m-0 mb-4">Unit details</p>
-                    
+
                     <div class="flex items-start gap-3 text-[13px] font-medium text-gray-800 mb-6">
                         <?php
-                            $qty = $row['quantity'];
-                            $dotClass = $qty >= 20 ? 'bg-[#f8fafc]' : ($qty > 0 ? 'bg-[#f8fafc]' : 'bg-[#f8fafc]');
-                            $fillClass = $qty >= 20 ? 'bg-primary' : ($qty > 0 ? 'bg-yellow-500' : 'bg-transparent');
-                            $stockText = $qty > 0 ? 'In stock' : 'Out of stock';
-                            if($qty > 0 && $qty < 20) $stockText = 'Low stock';
-                            
-                            $fillPercentage = $qty >= 20 ? 100 : ($qty / 20) * 100;
+                        $qty = $row['quantity'];
+                        $dotClass = $qty >= 20 ? 'border-primary/20 bg-primary/5' : ($qty > 0 ? 'border-yellow-500/30 bg-yellow-50' : 'border-gray-200 bg-gray-100');
+                        $fillClass = $qty >= 20 ? 'bg-primary' : ($qty > 0 ? 'bg-yellow-500' : 'bg-transparent');
+                        $stockText = $qty > 0 ? 'In stock' : 'Out of stock';
+                        if ($qty > 0 && $qty < 20) $stockText = 'Low stock';
+
+                        $fillPercentage = $qty >= 20 ? 100 : ($qty / 20) * 100;
                         ?>
-                        <div class="w-5 h-5 rounded-[5px] flex items-end overflow-hidden relative border border-black/10 <?= $dotClass ?>">
+                        <div class="w-5 h-5 rounded-[5px] flex items-end overflow-hidden relative border <?= $dotClass ?>">
                             <div class="w-full absolute bottom-0 left-0 transition-all duration-300 <?= $fillClass ?>" style="height: <?= $fillPercentage ?>%;"></div>
                         </div>
                         <div class="flex flex-col leading-tight">
@@ -161,7 +181,7 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
                 }
             });
         }
-        
+
         // Fetch cart immediately on load to get the badge count
         $(document).ready(function() {
             refreshCartDrawer();
