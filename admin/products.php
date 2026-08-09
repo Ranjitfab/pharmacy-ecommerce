@@ -15,6 +15,7 @@ $products = $myDB->res;
     <title>Manage Products</title>
     <link rel="stylesheet" href="../assets/css/tailwind.css">
 </head>
+
 <body class="font-sans bg-[#f4f7f6] m-0 text-[#333]">
     <div class="flex">
         <!-- Sidebar -->
@@ -25,6 +26,7 @@ $products = $myDB->res;
             <nav class="flex-1 p-4 flex flex-col gap-2">
                 <a href="dashboard.php" class="text-gray-600 px-4 py-3 rounded-lg font-medium no-underline hover:bg-gray-50 transition-colors">Dashboard</a>
                 <a href="products.php" class="bg-primary/10 text-primary px-4 py-3 rounded-lg font-medium no-underline">Manage Products</a>
+                <a href="orders.php" class="text-gray-600 px-4 py-3 rounded-lg font-medium no-underline hover:bg-gray-50 transition-colors">Manage Orders</a>
             </nav>
             <div class="p-4 border-t border-gray-100">
                 <a href="../auth/logout.php" class="text-red-500 font-medium no-underline flex items-center gap-2 px-4 py-2 hover:bg-red-50 rounded-lg transition-colors">Logout</a>
@@ -46,20 +48,20 @@ $products = $myDB->res;
                     <input type="text" name="product_name" placeholder="Product Name" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
                     <input type="number" name="category_id" placeholder="Category ID" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
                     <input type="number" name="supplier_id" placeholder="Supplier ID" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
-                    
+
                     <textarea name="description" placeholder="Description" class="col-span-1 md:col-span-3 p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border h-24 resize-y"></textarea>
-                    
+
                     <input type="number" step="0.01" name="price" placeholder="Price" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
                     <input type="number" name="quantity" placeholder="Quantity" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
                     <input type="number" name="reorder_level" placeholder="Reorder Level" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
-                    
+
                     <input type="date" name="expiration_date" class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border text-gray-500">
-                    
+
                     <div class="flex items-center gap-2 px-2">
                         <input type="checkbox" name="requires_prescription" id="rx_req" class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
                         <label for="rx_req" class="text-sm font-medium text-gray-700">Requires Prescription</label>
                     </div>
-                    
+
                     <div class="col-span-1 md:col-span-3 flex justify-end mt-2">
                         <button type="submit" name="add_product" class="bg-primary text-white border-none py-2 px-6 rounded-lg font-medium cursor-pointer transition-colors duration-200 hover:bg-primary-hover">Add Product</button>
                     </div>
@@ -84,7 +86,7 @@ $products = $myDB->res;
                         </thead>
                         <tbody>
                             <?php while ($row = $products->fetch_assoc()): ?>
-                                <tr data-id="<?= $row['product_id'] ?>" class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                <tr data-id="<?= $row['product_id'] ?>" data-price="<?= $row['price'] ?>" data-quantity="<?= $row['quantity'] ?>" data-reorder="<?= $row['reorder_level'] ?>" data-expiration="<?= $row['expiration_date'] ?>" data-rx="<?= $row['requires_prescription'] ?>" class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                     <td class="p-3 text-sm text-gray-700 align-middle"><?= $row['product_id'] ?></td>
                                     <td class="cell-name p-3 text-sm font-medium text-gray-800 align-middle"><?= htmlspecialchars($row['product_name']) ?></td>
                                     <td class="cell-price p-3 text-sm text-gray-700 align-middle">₱<?= $row['price'] ?></td>
@@ -111,6 +113,54 @@ $products = $myDB->res;
                 </div>
             </div>
         </main>
+    </div>
+
+
+    <!-- Edit Product Modal -->
+    <div id="edit-product-modal" class="hidden fixed inset-0 bg-black/40 z-[1000] flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
+            <h3 class="font-bold text-lg m-0 mb-4">Edit Product</h3>
+            <form id="edit-product-form" class="flex flex-col gap-4">
+                <input type="hidden" id="edit-product-id">
+
+                <div>
+                    <label class="text-sm font-medium text-gray-700 block mb-1">Product Name</label>
+                    <input type="text" id="edit-product-name" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 block mb-1">Price</label>
+                        <input type="number" step="0.01" id="edit-price" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 block mb-1">Quantity</label>
+                        <input type="number" id="edit-quantity" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 block mb-1">Reorder Level</label>
+                        <input type="number" id="edit-reorder" required class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 block mb-1">Expiration Date</label>
+                        <input type="date" id="edit-expiration" class="p-3 border border-[#ddd] rounded-lg text-sm outline-none transition-colors duration-200 focus:border-primary w-full box-border text-gray-500">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="edit-rx" class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
+                    <label for="edit-rx" class="text-sm font-medium text-gray-700">Requires Prescription</label>
+                </div>
+
+                <div class="flex justify-end gap-2 mt-2">
+                    <button type="button" onclick="closeEditModal()" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium cursor-pointer hover:bg-gray-200 transition-colors">Cancel</button>
+                    <button type="submit" class="bg-primary text-white px-4 py-2 rounded-lg font-medium cursor-pointer hover:bg-primary-hover transition-colors">Save Changes</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="../assets/js/jquery.min.js"></script>

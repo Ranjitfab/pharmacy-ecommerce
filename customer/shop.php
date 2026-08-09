@@ -75,7 +75,7 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
         <div class="flex items-center gap-4">
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
-                <input type="text" class="bg-black/5 border-none py-2.5 pr-4 pl-10 rounded-full outline-none w-[250px] font-inherit text-sm" placeholder="Search products">
+                <input type="text" id="search-input" class="bg-black/5 border-none py-2.5 pr-4 pl-10 rounded-full outline-none w-[250px] font-inherit text-sm" placeholder="Search products">
             </div>
             <button class="bg-primary text-white border-none px-5 py-2.5 rounded-full font-semibold cursor-pointer flex items-center gap-2 transition-colors duration-200 hover:bg-primary-hover" onclick="openCartDrawer()">
                 <i class="fa-solid fa-cart-shopping"></i> Cart <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs" id="cart-badge">0</span>
@@ -169,15 +169,30 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
 
     <script src="../assets/js/jquery.min.js"></script>
     <script>
+        // Tracks the active category so search and category filtering
+        // combine correctly instead of one overriding the other.
+        var currentCategory = 'all';
+
         function filterProducts(categoryId, btn) {
             $('.cat-btn').removeClass('active');
             $(btn).addClass('active');
+            currentCategory = categoryId;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            var searchTerm = $('#search-input').val().trim().toLowerCase();
 
             $('.card').each(function() {
-                if (categoryId === 'all' || $(this).data('category') == categoryId) {
-                    $(this).show();
+                var card = $(this);
+                var matchesCategory = currentCategory === 'all' || card.data('category') == currentCategory;
+                var productName = card.find('h3').text().toLowerCase();
+                var matchesSearch = searchTerm === '' || productName.indexOf(searchTerm) !== -1;
+
+                if (matchesCategory && matchesSearch) {
+                    card.show();
                 } else {
-                    $(this).hide();
+                    card.hide();
                 }
             });
         }
@@ -185,6 +200,8 @@ $categories->data_seek(0); // reset pointer for the filter buttons loop
         // Fetch cart immediately on load to get the badge count
         $(document).ready(function() {
             refreshCartDrawer();
+
+            $('#search-input').on('input', applyFilters);
         });
     </script>
     <script src="../assets/js/cart.js"></script>
