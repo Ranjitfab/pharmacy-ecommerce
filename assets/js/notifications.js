@@ -1,38 +1,78 @@
-document.addEventListener('DOMContentLoaded', async function () {
-    const notificationList = document.getElementById('admin-notification-list');
-    if (!notificationList) {
-        return;
+// ------------------------------------------------------------
+// TOAST NOTIFICATION LOGIC
+// Self-contained for the dashboard - visually consistent with
+// the toast pattern used in cart.js, but this page doesn't load
+// cart.js (it's not needed here), so this is its own copy.
+// ------------------------------------------------------------
+function showAdminToast(message, type) {
+    if ($("#toast-container").length === 0) return;
+
+    var toastId = "toast-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    var toastHtml = '<div class="toast toast-' + type + '" id="' + toastId + '">' + message + '</div>';
+
+    $("#toast-container").append(toastHtml);
+
+    var toastEl = $("#" + toastId);
+    setTimeout(function () { toastEl.addClass("show"); }, 10);
+
+    setTimeout(function () {
+        toastEl.removeClass("show");
+        setTimeout(function () { toastEl.remove(); }, 300);
+    }, 6000);
+}
+
+// ------------------------------------------------------------
+// Track which alerts have already been shown, so re-polling
+// doesn't re-notify about the same low-stock/expiring item
+// over and over. Seeded with whatever dashboard.php already
+// rendered server-side on page load.
+// ------------------------------------------------------------
+var seenAlerts = new Set(typeof initialAlertKeys !== "undefined" ? initialAlertKeys : []);
+
+function checkForNewAlerts() {
+    $.get("../db/notification_requests.php")
+        .done(function (response) {
+            var result = typeof response === "string" ? JSON.parse(response) : response;
+            var notifications = Array.isArray(result.notifications) ? result.notifications : [];
+
+            notifications.forEach(function (alert) {
+                var key = alert.type + "|" + alert.product;
+                if (seenAlerts.has(key)) return; // already shown, skip
+
+                seenAlerts.add(key);
+                showAdminToast(alert.message, alert.type);
+
+                if ("Notification" in window && Notification.permission === "granted") {
+                    new Notification("RxStock Admin Alert", { body: alert.message });
+                }
+            });
+        })
+        .fail(function (err) {
+            console.error("Unable to load notifications:", err);
+        });
+}
+
+// ------------------------------------------------------------
+// Browser notification permission requires a real user click in
+
+$(document).ready(function () {
+    var enableBtn = $("#enable-notifications-btn");
+
+    if (!("Notification" in window)) {
+        enableBtn.hide();
+    } else if (Notification.permission === "granted") {
+        enableBtn.text("Notifications Enabled").prop("disabled", true);
     }
 
-    try {
-        const response = await fetch('../db/notification_requests.php');
-        const result = await response.json();
-        const notifications = Array.isArray(result.notifications) ? result.notifications : [];
-
-        if (!notifications.length) {
-            return;
-        }
-
-        const summary = notifications.map((item) => item.message).join('\n');
-
-        if ('Notification' in window) {
-            if (Notification.permission === 'granted') {
-                new Notification('RxStock Admin Alert', {
-                    body: summary,
-                });
-            } else if (Notification.permission !== 'denied') {
-                Notification.requestPermission().then((permission) => {
-                    if (permission === 'granted') {
-                        new Notification('RxStock Admin Alert', {
-                            body: summary,
-                        });
-                    }
-                });
+    enableBtn.on("click", function () {
+        Notification.requestPermission().then(function (permission) {
+            if (permission === "granted") {
+                enableBtn.text("Notifications Enabled").prop("disabled", true);
+                showAdminToast("Browser notifications enabled.", "low_stock");
             }
-        }
+        });
+    });
 
-        window.alert('Admin alert:\n' + summary);
-    } catch (error) {
-        console.error('Unable to load notifications:', error);
-    }
+    // Poll every 30 seconds
+    setInterval(checkForNewAlerts, 30000);
 });
