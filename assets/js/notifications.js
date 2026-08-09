@@ -1,9 +1,6 @@
-// ------------------------------------------------------------
+
 // TOAST NOTIFICATION LOGIC
-// Self-contained for the dashboard - visually consistent with
-// the toast pattern used in cart.js, but this page doesn't load
-// cart.js (it's not needed here), so this is its own copy.
-// ------------------------------------------------------------
+
 function showAdminToast(message, type) {
     if ($("#toast-container").length === 0) return;
 
@@ -21,12 +18,7 @@ function showAdminToast(message, type) {
     }, 6000);
 }
 
-// ------------------------------------------------------------
-// Track which alerts have already been shown, so re-polling
-// doesn't re-notify about the same low-stock/expiring item
-// over and over. Seeded with whatever dashboard.php already
-// rendered server-side on page load.
-// ------------------------------------------------------------
+// Track which alerts have already been shown, so re-polling doesn't re-notify about the same low-stock/expiring item
 var seenAlerts = new Set(typeof initialAlertKeys !== "undefined" ? initialAlertKeys : []);
 
 function checkForNewAlerts() {
@@ -52,8 +44,7 @@ function checkForNewAlerts() {
         });
 }
 
-// ------------------------------------------------------------
-// Browser notification permission requires a real user click in
+// Browser notification permission button
 
 $(document).ready(function () {
     var enableBtn = $("#enable-notifications-btn");
